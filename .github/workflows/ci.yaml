@@ -31,12 +31,11 @@ jobs:
   build-image:
     runs-on: ubuntu-latest
     needs: test
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/frontend-react
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Enable BuildKit
-        run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
       - name: Log in to Docker Hub
         run: |
@@ -45,19 +44,17 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend-react"
-          COMMIT_TAG="${{ github.sha }}"
-          SHORT_TAG="${COMMIT_TAG:0:7}"
+          SHORT_TAG=$(echo "${GITHUB_SHA}" | cut -c1-7)
 
-          # build con contexto explícito
-          docker build . -t $IMAGE_NAME:latest -t $IMAGE_NAME:$SHORT_TAG
-
-          # exportar SHORT_TAG para el siguiente step
           echo "SHORT_TAG=$SHORT_TAG" >> $GITHUB_ENV
+
+          docker buildx build \
+            --load \
+            --tag "$IMAGE_NAME:latest" \
+            --tag "$IMAGE_NAME:$SHORT_TAG" \
+            .
 
       - name: Push Docker image
         run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend-react"
-
-          docker push $IMAGE_NAME:latest
-          docker push $IMAGE_NAME:${SHORT_TAG}
+          docker push "$IMAGE_NAME:latest"
+          docker push "$IMAGE_NAME:$SHORT_TAG"
