@@ -7,7 +7,6 @@ import React, { useState } from 'react';
  */
 const Contador = () => {
     const [cuenta, setCuenta] = useState(0);
-    const prueba = 12;
 
     const incrementar = () => setCuenta(c => c + 1);
     const decrementar = () => {
