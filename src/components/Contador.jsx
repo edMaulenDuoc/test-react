@@ -53,7 +53,6 @@ const Contador = () => {
                     >
                         Reiniciar
                     </button>
-
                     <button
                         onClick={incrementar}
                         aria-label="sumar"
