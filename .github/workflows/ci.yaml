@@ -43,17 +43,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          SHORT_TAG=$(echo "${GITHUB_SHA}" | cut -c1-7)
-
-          echo "SHORT_TAG=$SHORT_TAG" >> $GITHUB_ENV
-
           docker build \
             --load \
             --tag "$IMAGE_NAME:latest" \
-            --tag "$IMAGE_NAME:$SHORT_TAG" \
             .
 
       - name: Push Docker image
         run: |
           docker push "$IMAGE_NAME:latest"
-          docker push "$IMAGE_NAME:$SHORT_TAG"
