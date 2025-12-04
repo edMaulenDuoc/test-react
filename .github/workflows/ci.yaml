@@ -43,10 +43,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
-            --load \
-            --tag "$IMAGE_NAME:latest" \
-            .
+          docker build --tag "$IMAGE_NAME:latest-v.2" 
+            
 
       - name: Push Docker image
         run: |
